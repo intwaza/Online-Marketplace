@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Order } from '../../orders/entities/order.entity';
 import { PaymentMethod } from '../../common/enums/payment-method.enum';
 
@@ -33,7 +41,7 @@ export class Payment {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => Order, order => order.payments)
+  @ManyToOne(() => Order, (order) => order.payments)
   @JoinColumn({ name: 'order_id' })
   order: Order;
 

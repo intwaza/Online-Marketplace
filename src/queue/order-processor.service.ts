@@ -22,14 +22,14 @@ export class OrderProcessorService {
   @Process('process-order')
   async processOrder(job: Job<{ orderId: string; items: any[] }>) {
     const { orderId, items } = job.data;
-    
+
     try {
       // Update stock quantities
       for (const item of items) {
         const product = await this.productRepository.findOne({
           where: { id: item.productId },
         });
-        
+
         if (product) {
           product.stockQuantity -= item.quantity;
           await this.productRepository.save(product);
@@ -49,7 +49,7 @@ export class OrderProcessorService {
           orderId,
           order.totalAmount,
         );
-        
+
         console.log(`Order ${orderId} processed successfully`);
       }
     } catch (error) {
@@ -59,9 +59,11 @@ export class OrderProcessorService {
   }
 
   @Process('send-order-status-update')
-  async sendOrderStatusUpdate(job: Job<{ email: string; orderId: string; status: string }>) {
+  async sendOrderStatusUpdate(
+    job: Job<{ email: string; orderId: string; status: string }>,
+  ) {
     const { email, orderId, status } = job.data;
-    
+
     try {
       await this.emailService.sendOrderStatusEmail(email, orderId, status);
       console.log(`Order status update email sent for order ${orderId}`);

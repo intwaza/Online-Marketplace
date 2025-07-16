@@ -3,9 +3,13 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('Root')
 @Controller() // No prefix, handles root path
-export class AppController { // Keep the class name as AppController
+export class AppController {
+  // Keep the class name as AppController
   @ApiOperation({ summary: 'API welcome message' })
-  @ApiResponse({ status: 200, description: 'Welcome message with API information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Welcome message with API information',
+  })
   @Get()
   getWelcome() {
     return {
@@ -22,7 +26,7 @@ export class AppController { // Keep the class name as AppController
         orders: '/api/orders',
         reviews: '/api/reviews',
         payments: '/api/payments',
-      }
+      },
     };
   }
 }

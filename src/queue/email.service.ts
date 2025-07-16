@@ -21,7 +21,7 @@ export class EmailService {
 
   async sendVerificationEmail(email: string, token: string): Promise<void> {
     const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/auth/verify-email/${token}`;
-    
+
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
@@ -46,12 +46,14 @@ export class EmailService {
 
   async sendSellerUpgradeEmail(email: string): Promise<void> {
     if (!this.isConfigured) {
-      console.log(`Email not configured. Would send seller upgrade email to: ${email}`);
+      console.log(
+        `Email not configured. Would send seller upgrade email to: ${email}`,
+      );
       return;
     }
-  
+
     const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/auth/login`;
-    
+
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
@@ -72,7 +74,7 @@ export class EmailService {
         <p>Best regards,<br>Marketplace Team</p>
       `,
     };
-  
+
     try {
       await this.transporter.sendMail(mailOptions);
       console.log(`Seller upgrade email sent to ${email}`);
@@ -80,17 +82,21 @@ export class EmailService {
       console.error('Error sending seller upgrade email:', error);
     }
   }
-  
+
   // Update the existing sendSellerApplicationEmail to handle upgrades
-  async sendSellerApplicationEmail(application: SellerApplicationDto & { upgradeRequest?: boolean }): Promise<void> {
+  async sendSellerApplicationEmail(
+    application: SellerApplicationDto & { upgradeRequest?: boolean },
+  ): Promise<void> {
     if (!this.isConfigured) {
-      console.log(`Email not configured. Would send seller application for: ${application.email}`);
+      console.log(
+        `Email not configured. Would send seller application for: ${application.email}`,
+      );
       return;
     }
-  
+
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@marketplace.com';
     const isUpgrade = application.upgradeRequest || false;
-    
+
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: adminEmail,
@@ -105,18 +111,23 @@ export class EmailService {
         <p>Best regards,<br>Marketplace System</p>
       `,
     };
-  
+
     try {
       await this.transporter.sendMail(mailOptions);
-      console.log(`Seller ${isUpgrade ? 'upgrade' : 'application'} email sent for ${application.email}`);
+      console.log(
+        `Seller ${isUpgrade ? 'upgrade' : 'application'} email sent for ${application.email}`,
+      );
     } catch (error) {
       console.error('Error sending seller application email:', error);
     }
   }
 
-  async sendSellerApprovalEmail(email: string, tempPassword: string): Promise<void> {
+  async sendSellerApprovalEmail(
+    email: string,
+    tempPassword: string,
+  ): Promise<void> {
     const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/auth/login`;
-    
+
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
@@ -142,7 +153,11 @@ export class EmailService {
     }
   }
 
-  async sendOrderStatusEmail(email: string, orderId: string, status: string): Promise<void> {
+  async sendOrderStatusEmail(
+    email: string,
+    orderId: string,
+    status: string,
+  ): Promise<void> {
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
@@ -164,7 +179,11 @@ export class EmailService {
     }
   }
 
-  async sendOrderConfirmationEmail(email: string, orderId: string, totalAmount: number): Promise<void> {
+  async sendOrderConfirmationEmail(
+    email: string,
+    orderId: string,
+    totalAmount: number,
+  ): Promise<void> {
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
@@ -181,7 +200,9 @@ export class EmailService {
 
     try {
       await this.transporter.sendMail(mailOptions);
-      console.log(`Order confirmation email sent to ${email} for order ${orderId}`);
+      console.log(
+        `Order confirmation email sent to ${email} for order ${orderId}`,
+      );
     } catch (error) {
       console.error('Error sending order confirmation email:', error);
     }

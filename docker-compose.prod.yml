@@ -12,15 +12,15 @@ services:
       - DATABASE_HOST=postgres
       - DATABASE_PORT=5432
       - DATABASE_USERNAME=marketplace_user
-      - DATABASE_PASSWORD=${DB_PASSWORD}
+      - DATABASE_PASSWORD=password
       - DATABASE_NAME=marketplace_db
-      - JWT_SECRET=${JWT_SECRET}
+      - JWT_SECRET=24947ec697b63d5b9e0266a23b81c02885c1d3574ed17b16afc8f602fce77e671cffb8215dbd75a06f25c8e55ae594f84535d4825102ce7bd9ef083584105f8b
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - SMTP_HOST=smtp.gmail.com
       - SMTP_PORT=587
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_USER=iintwazabelyse@gmail.com
+      - SMTP_PASS=dynm acsh wfin iqxe
     depends_on:
       - postgres
       - redis

@@ -1,5 +1,19 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -24,7 +38,10 @@ export class CategoriesController {
   }
 
   @ApiOperation({ summary: 'Get all categories' })
-  @ApiResponse({ status: 200, description: 'Categories retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Categories retrieved successfully',
+  })
   @Get()
   async findAll() {
     return this.categoriesService.findAll();
@@ -45,7 +62,10 @@ export class CategoriesController {
   @ApiBearerAuth()
   @Put(':id')
   @Roles(UserRole.ADMIN)
-  async update(@Param('id') id: string, @Body() updateCategoryDto: CreateCategoryDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCategoryDto: CreateCategoryDto,
+  ) {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 

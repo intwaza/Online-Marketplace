@@ -46,7 +46,10 @@ describe('CategoriesController', () => {
 
   describe('create', () => {
     it('should create a category', async () => {
-      const createDto = { name: 'Electronics', description: 'Electronic devices' };
+      const createDto = {
+        name: 'Electronics',
+        description: 'Electronic devices',
+      };
       mockCategoriesService.create.mockResolvedValue(mockCategory);
 
       const result = await controller.create(createDto);

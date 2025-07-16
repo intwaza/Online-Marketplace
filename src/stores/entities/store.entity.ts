@@ -1,5 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
-import {User} from '../../users/entities/user.entity'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 import { Product } from '../../products/entities/product.entity';
 
 @Entity('stores')
@@ -23,13 +32,13 @@ export class Store {
   updatedAt: Date;
 
   // Relations
-  @OneToOne(() => User, user => user.store)
+  @OneToOne(() => User, (user) => user.store)
   @JoinColumn({ name: 'owner_id' })
   owner: User;
 
   @Column()
   ownerId: string;
 
-  @OneToMany(() => Product, product => product.store)
+  @OneToMany(() => Product, (product) => product.store)
   products: Product[];
 }

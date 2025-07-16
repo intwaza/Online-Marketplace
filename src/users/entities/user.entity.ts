@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { Store } from '../../stores/entities/store.entity';
 import { Order } from '../../orders/entities/order.entity';
@@ -34,12 +42,12 @@ export class User {
   updatedAt: Date;
 
   // Relations
-  @OneToOne(() => Store, store => store.owner)
+  @OneToOne(() => Store, (store) => store.owner)
   store: Store;
 
-  @OneToMany(() => Order, order => order.user)
+  @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 
-  @OneToMany(() => Review, review => review.user)
+  @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
 }

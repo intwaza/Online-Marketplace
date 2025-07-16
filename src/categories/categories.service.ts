@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
@@ -41,9 +45,12 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: string, updateCategoryDto: CreateCategoryDto): Promise<Category> {
+  async update(
+    id: string,
+    updateCategoryDto: CreateCategoryDto,
+  ): Promise<Category> {
     const category = await this.findById(id);
-    
+
     // Check if name is already taken by another category
     if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
       const existingCategory = await this.categoryRepository.findOne({

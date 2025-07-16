@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
@@ -38,17 +43,21 @@ export class AuthService {
     });
 
     // Send verification email
-    await this.emailService.sendVerificationEmail(user.email, verificationToken);
+    await this.emailService.sendVerificationEmail(
+      user.email,
+      verificationToken,
+    );
 
     return {
-      message: 'User registered successfully. Please check your email for verification.',
+      message:
+        'User registered successfully. Please check your email for verification.',
       userId: user.id,
     };
   }
 
   async verifyEmail(token: string) {
     const user = await this.usersService.findByVerificationToken(token);
-    console.log("user", user)
+    console.log('user', user);
     if (!user) {
       throw new NotFoundException('Invalid verification token');
     }
@@ -70,11 +79,16 @@ export class AuthService {
 
     // Check if user is verified
     if (!user.isVerified) {
-      throw new UnauthorizedException('Please verify your email before logging in');
+      throw new UnauthorizedException(
+        'Please verify your email before logging in',
+      );
     }
 
     // Validate password
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -94,75 +108,82 @@ export class AuthService {
     };
   }
 
-
   // Enhanced auth.service.ts with role upgrade capability
 
-    async applyAsSeller(sellerApplicationDto: SellerApplicationDto) {
-        const existingUser = await this.usersService.findByEmail(sellerApplicationDto.email);
-        
-        if (existingUser) {
-        // Handle different existing user scenarios
-        switch (existingUser.role) {
-            case UserRole.SELLER:
-            throw new ConflictException('User is already a seller');
-            
-            case UserRole.ADMIN:
-            throw new ConflictException('Admin users cannot apply as sellers');
-            
-            case UserRole.SHOPPER:
-            // Allow shoppers to upgrade to sellers
-            await this.emailService.sendSellerApplicationEmail({
-                ...sellerApplicationDto,
-                upgradeRequest: true, // Flag to indicate this is an upgrade
-            });
-            
-            return {
-                message: 'Seller upgrade application submitted successfully. You will receive an email once approved.',
-                type: 'upgrade',
-            };
-            
-            default:
-            throw new ConflictException('Invalid user role for seller application');
-        }
-        }
-    
-        // New user application
-        await this.emailService.sendSellerApplicationEmail(sellerApplicationDto);
-    
-        return {
-        message: 'Seller application submitted successfully. You will receive an email once approved.',
-        type: 'new_application',
-        };
+  async applyAsSeller(sellerApplicationDto: SellerApplicationDto) {
+    const existingUser = await this.usersService.findByEmail(
+      sellerApplicationDto.email,
+    );
+
+    if (existingUser) {
+      // Handle different existing user scenarios
+      switch (existingUser.role) {
+        case UserRole.SELLER:
+          throw new ConflictException('User is already a seller');
+
+        case UserRole.ADMIN:
+          throw new ConflictException('Admin users cannot apply as sellers');
+
+        case UserRole.SHOPPER:
+          // Allow shoppers to upgrade to sellers
+          await this.emailService.sendSellerApplicationEmail({
+            ...sellerApplicationDto,
+            upgradeRequest: true, // Flag to indicate this is an upgrade
+          });
+
+          return {
+            message:
+              'Seller upgrade application submitted successfully. You will receive an email once approved.',
+            type: 'upgrade',
+          };
+
+        default:
+          throw new ConflictException(
+            'Invalid user role for seller application',
+          );
+      }
     }
-  
+
+    // New user application
+    await this.emailService.sendSellerApplicationEmail(sellerApplicationDto);
+
+    return {
+      message:
+        'Seller application submitted successfully. You will receive an email once approved.',
+      type: 'new_application',
+    };
+  }
+
   // Enhanced approveSeller method to handle upgrades
   async approveSeller(email: string, isUpgrade: boolean = false) {
     const existingUser = await this.usersService.findByEmail(email);
-    
+
     if (isUpgrade && existingUser && existingUser.role === UserRole.SHOPPER) {
       // Upgrade existing shopper to seller
       await this.usersService.update(existingUser.id, {
         role: UserRole.SELLER,
       });
-      
+
       // Send upgrade confirmation email
       await this.emailService.sendSellerUpgradeEmail(email);
-      
+
       return {
         message: 'Shopper successfully upgraded to seller',
         userId: existingUser.id,
         type: 'upgrade',
       };
     }
-    
+
     if (existingUser) {
-      throw new ConflictException('User already exists. Use upgrade process instead.');
+      throw new ConflictException(
+        'User already exists. Use upgrade process instead.',
+      );
     }
-    
+
     // Create new seller account (original logic)
     const tempPassword = Math.random().toString(36).slice(-8);
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
-  
+
     const user = await this.usersService.create({
       email,
       name: 'Seller', // Will be updated by user
@@ -170,10 +191,10 @@ export class AuthService {
       role: UserRole.SELLER,
       isVerified: true,
     });
-  
+
     // Send account creation email
     await this.emailService.sendSellerApprovalEmail(email, tempPassword);
-  
+
     return {
       message: 'Seller approved and account created successfully',
       userId: user.id,

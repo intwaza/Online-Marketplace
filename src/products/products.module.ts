@@ -9,8 +9,8 @@ import { ReviewsModule } from '../reviews/reviews.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product]), 
-    StoresModule, 
+    TypeOrmModule.forFeature([Product]),
+    StoresModule,
     CategoriesModule,
     forwardRef(() => ReviewsModule), // Handle potential circular dependency
   ],

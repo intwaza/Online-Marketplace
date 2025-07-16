@@ -1,5 +1,21 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ReviewsService } from '../reviews/reviews.service';
@@ -25,7 +41,10 @@ export class ProductsController {
   @ApiBearerAuth()
   @Post()
   @Roles(UserRole.SELLER)
-  async create(@Body() createProductDto: CreateProductDto, @GetUser() user: User) {
+  async create(
+    @Body() createProductDto: CreateProductDto,
+    @GetUser() user: User,
+  ) {
     return this.productsService.create(createProductDto, user);
   }
 
@@ -46,7 +65,10 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary: 'Get featured products' })
-  @ApiResponse({ status: 200, description: 'Featured products retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Featured products retrieved successfully',
+  })
   @Get('featured')
   async getFeatured() {
     return this.productsService.getFeaturedProducts();
@@ -61,14 +83,20 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary: 'Get product reviews' })
-  @ApiResponse({ status: 200, description: 'Product reviews retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Product reviews retrieved successfully',
+  })
   @Get(':id/reviews')
   async getProductReviews(@Param('id') productId: string) {
     return this.reviewsService.findByProduct(productId);
   }
 
   @ApiOperation({ summary: 'Get product rating stats' })
-  @ApiResponse({ status: 200, description: 'Product rating stats retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Product rating stats retrieved successfully',
+  })
   @Get(':id/rating-stats')
   async getProductRatingStats(@Param('id') productId: string) {
     return this.reviewsService.getProductRatingStats(productId);
@@ -76,11 +104,18 @@ export class ProductsController {
 
   @ApiOperation({ summary: 'Update product' })
   @ApiResponse({ status: 200, description: 'Product updated successfully' })
-  @ApiResponse({ status: 403, description: 'You can only update your own products' })
+  @ApiResponse({
+    status: 403,
+    description: 'You can only update your own products',
+  })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateProductDto: CreateProductDto, @GetUser() user: User) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: CreateProductDto,
+    @GetUser() user: User,
+  ) {
     return this.productsService.update(id, updateProductDto, user);
   }
 
@@ -96,7 +131,10 @@ export class ProductsController {
 
   @ApiOperation({ summary: 'Delete product' })
   @ApiResponse({ status: 200, description: 'Product deleted successfully' })
-  @ApiResponse({ status: 403, description: 'You can only delete your own products' })
+  @ApiResponse({
+    status: 403,
+    description: 'You can only delete your own products',
+  })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Delete(':id')

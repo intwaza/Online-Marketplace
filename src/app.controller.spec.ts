@@ -20,7 +20,7 @@ describe('AppController', () => {
   describe('getWelcome', () => {
     it('should return welcome message with API information', () => {
       const result = controller.getWelcome();
-      
+
       expect(result).toEqual({
         message: 'Welcome to Marketplace API',
         documentation: '/api/docs',
@@ -35,7 +35,7 @@ describe('AppController', () => {
           orders: '/api/orders',
           reviews: '/api/reviews',
           payments: '/api/payments',
-        }
+        },
       });
     });
 
@@ -62,11 +62,17 @@ describe('AppController', () => {
     it('should have all required endpoints', () => {
       const result = controller.getWelcome();
       const expectedEndpoints = [
-        'auth', 'users', 'stores', 'products', 
-        'categories', 'orders', 'reviews', 'payments'
+        'auth',
+        'users',
+        'stores',
+        'products',
+        'categories',
+        'orders',
+        'reviews',
+        'payments',
       ];
-      
-      expectedEndpoints.forEach(endpoint => {
+
+      expectedEndpoints.forEach((endpoint) => {
         expect(result.endpoints).toHaveProperty(endpoint);
         expect(result.endpoints[endpoint]).toBe(`/api/${endpoint}`);
       });
@@ -74,7 +80,7 @@ describe('AppController', () => {
 
     it('should return object with correct structure', () => {
       const result = controller.getWelcome();
-      
+
       expect(typeof result).toBe('object');
       expect(typeof result.message).toBe('string');
       expect(typeof result.documentation).toBe('string');

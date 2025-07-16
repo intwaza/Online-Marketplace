@@ -65,7 +65,6 @@ describe('AuthService', () => {
       jest.spyOn(usersService, 'findByEmail').mockResolvedValue(user as any);
       jest.spyOn(jwtService, 'sign').mockReturnValue('jwt-token');
 
-      // Mock bcrypt.compare
       const bcrypt = require('bcrypt');
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
 

@@ -1,5 +1,18 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Put } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Put,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { ProcessPaymentDto } from './dto/process-payment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -20,7 +33,10 @@ export class PaymentsController {
   @ApiResponse({ status: 201, description: 'Payment processed successfully' })
   @ApiResponse({ status: 400, description: 'Payment processing failed' })
   @Post('process')
-  async processPayment(@Body() processPaymentDto: ProcessPaymentDto, @GetUser() user: User) {
+  async processPayment(
+    @Body() processPaymentDto: ProcessPaymentDto,
+    @GetUser() user: User,
+  ) {
     return this.paymentsService.processPayment(processPaymentDto, user);
   }
 
@@ -33,7 +49,10 @@ export class PaymentsController {
   }
 
   @ApiOperation({ summary: 'Get payments for order' })
-  @ApiResponse({ status: 200, description: 'Order payments retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Order payments retrieved successfully',
+  })
   @Get('order/:orderId')
   async findByOrder(@Param('orderId') orderId: string) {
     return this.paymentsService.findByOrder(orderId);
@@ -41,7 +60,10 @@ export class PaymentsController {
 
   @ApiOperation({ summary: 'Refund payment (Admin only)' })
   @ApiResponse({ status: 200, description: 'Payment refunded successfully' })
-  @ApiResponse({ status: 400, description: 'Can only refund completed payments' })
+  @ApiResponse({
+    status: 400,
+    description: 'Can only refund completed payments',
+  })
   @Put(':id/refund')
   @Roles(UserRole.ADMIN)
   async refund(@Param('id') id: string) {

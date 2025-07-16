@@ -1,5 +1,19 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -42,9 +56,16 @@ export class StoresController {
 
   @ApiOperation({ summary: 'Update store' })
   @ApiResponse({ status: 200, description: 'Store updated successfully' })
-  @ApiResponse({ status: 403, description: 'You can only update your own store' })
+  @ApiResponse({
+    status: 403,
+    description: 'You can only update your own store',
+  })
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateStoreDto: CreateStoreDto, @GetUser() user: User) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateStoreDto: CreateStoreDto,
+    @GetUser() user: User,
+  ) {
     return this.storesService.update(id, updateStoreDto, user);
   }
 
@@ -58,7 +79,10 @@ export class StoresController {
 
   @ApiOperation({ summary: 'Delete store' })
   @ApiResponse({ status: 200, description: 'Store deleted successfully' })
-  @ApiResponse({ status: 403, description: 'You can only delete your own store' })
+  @ApiResponse({
+    status: 403,
+    description: 'You can only delete your own store',
+  })
   @Delete(':id')
   async remove(@Param('id') id: string, @GetUser() user: User) {
     await this.storesService.remove(id, user);

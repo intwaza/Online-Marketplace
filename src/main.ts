@@ -7,12 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Global validation pipe
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-    forbidNonWhitelisted: true,
-  }));
-
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   // CORS configuration
   app.enableCors({
@@ -60,13 +61,12 @@ async function bootstrap() {
           orders: '/api/orders',
           reviews: '/api/reviews',
           payments: '/api/payments',
-        }
+        },
       });
     } else {
       next();
     }
   });
-
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

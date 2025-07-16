@@ -6,7 +6,10 @@ export class CreateCategoryDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'Electronic devices and accessories', required: false })
+  @ApiProperty({
+    example: 'Electronic devices and accessories',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;

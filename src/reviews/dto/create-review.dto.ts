@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsNumber, IsString, IsOptional, Min, Max } from 'class-validator';
+import {
+  IsUUID,
+  IsNumber,
+  IsString,
+  IsOptional,
+  Min,
+  Max,
+} from 'class-validator';
 
 export class CreateReviewDto {
   @ApiProperty({ example: 'uuid-of-product' })

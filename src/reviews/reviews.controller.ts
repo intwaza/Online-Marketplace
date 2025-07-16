@@ -1,5 +1,19 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -21,7 +35,10 @@ export class ReviewsController {
   @ApiResponse({ status: 403, description: 'Only shoppers can leave reviews' })
   @Post()
   @Roles(UserRole.SHOPPER)
-  async create(@Body() createReviewDto: CreateReviewDto, @GetUser() user: User) {
+  async create(
+    @Body() createReviewDto: CreateReviewDto,
+    @GetUser() user: User,
+  ) {
     return this.reviewsService.create(createReviewDto, user);
   }
 
@@ -35,15 +52,25 @@ export class ReviewsController {
 
   @ApiOperation({ summary: 'Update review' })
   @ApiResponse({ status: 200, description: 'Review updated successfully' })
-  @ApiResponse({ status: 403, description: 'You can only update your own reviews' })
+  @ApiResponse({
+    status: 403,
+    description: 'You can only update your own reviews',
+  })
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateReviewDto: CreateReviewDto, @GetUser() user: User) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateReviewDto: CreateReviewDto,
+    @GetUser() user: User,
+  ) {
     return this.reviewsService.update(id, updateReviewDto, user);
   }
 
   @ApiOperation({ summary: 'Delete review' })
   @ApiResponse({ status: 200, description: 'Review deleted successfully' })
-  @ApiResponse({ status: 403, description: 'You can only delete your own reviews' })
+  @ApiResponse({
+    status: 403,
+    description: 'You can only delete your own reviews',
+  })
   @Delete(':id')
   async remove(@Param('id') id: string, @GetUser() user: User) {
     await this.reviewsService.remove(id, user);

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -17,7 +22,10 @@ export class ProductsService {
     private categoriesService: CategoriesService,
   ) {}
 
-  async create(createProductDto: CreateProductDto, user: User): Promise<Product> {
+  async create(
+    createProductDto: CreateProductDto,
+    user: User,
+  ): Promise<Product> {
     // Check if user is seller
     if (user.role !== UserRole.SELLER) {
       throw new ForbiddenException('Only sellers can create products');
@@ -44,8 +52,14 @@ export class ProductsService {
     return this.productRepository.save(product);
   }
 
-  async findAll(page: number = 1, limit: number = 10, search?: string, categoryId?: string): Promise<{ products: Product[]; total: number }> {
-    const query = this.productRepository.createQueryBuilder('product')
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    categoryId?: string,
+  ): Promise<{ products: Product[]; total: number }> {
+    const query = this.productRepository
+      .createQueryBuilder('product')
       .leftJoinAndSelect('product.store', 'store')
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('product.reviews', 'reviews')
@@ -53,9 +67,12 @@ export class ProductsService {
       .orderBy('product.createdAt', 'DESC');
 
     if (search) {
-      query.andWhere('(product.name ILIKE :search OR product.description ILIKE :search)', {
-        search: `%${search}%`,
-      });
+      query.andWhere(
+        '(product.name ILIKE :search OR product.description ILIKE :search)',
+        {
+          search: `%${search}%`,
+        },
+      );
     }
 
     if (categoryId) {
@@ -111,11 +128,18 @@ export class ProductsService {
     });
   }
 
-  async update(id: string, updateProductDto: CreateProductDto, user: User): Promise<Product> {
+  async update(
+    id: string,
+    updateProductDto: CreateProductDto,
+    user: User,
+  ): Promise<Product> {
     const product = await this.findById(id);
-    
+
     // Check if user owns the product or is admin
-    if (user.role !== UserRole.ADMIN && product.store.id !== (await this.storesService.findByOwner(user.id))?.id) {
+    if (
+      user.role !== UserRole.ADMIN &&
+      product.store.id !== (await this.storesService.findByOwner(user.id))?.id
+    ) {
       throw new ForbiddenException('You can only update your own products');
     }
 
@@ -142,9 +166,12 @@ export class ProductsService {
 
   async remove(id: string, user: User): Promise<void> {
     const product = await this.findById(id);
-    
+
     // Check if user owns the product or is admin
-    if (user.role !== UserRole.ADMIN && product.store.id !== (await this.storesService.findByOwner(user.id))?.id) {
+    if (
+      user.role !== UserRole.ADMIN &&
+      product.store.id !== (await this.storesService.findByOwner(user.id))?.id
+    ) {
       throw new ForbiddenException('You can only delete your own products');
     }
 

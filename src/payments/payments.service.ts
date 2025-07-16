@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Payment, PaymentStatus } from './entities/payment.entity';
@@ -16,7 +20,10 @@ export class PaymentsService {
     private ordersService: OrdersService,
   ) {}
 
-  async processPayment(processPaymentDto: ProcessPaymentDto, user: User): Promise<Payment> {
+  async processPayment(
+    processPaymentDto: ProcessPaymentDto,
+    user: User,
+  ): Promise<Payment> {
     const order = await this.ordersService.findById(processPaymentDto.orderId);
 
     // Check if user owns the order
@@ -51,14 +58,20 @@ export class PaymentsService {
     const paymentResult = await this.mockPaymentProcess(processPaymentDto);
 
     // Update payment status
-    savedPayment.status = paymentResult.success ? PaymentStatus.COMPLETED : PaymentStatus.FAILED;
+    savedPayment.status = paymentResult.success
+      ? PaymentStatus.COMPLETED
+      : PaymentStatus.FAILED;
     savedPayment.paymentReference = paymentResult.reference;
 
     await this.paymentRepository.save(savedPayment);
 
     // Update order status if payment successful
     if (paymentResult.success) {
-      await this.ordersService.updateStatus(order.id, OrderStatus.PROCESSING, user);
+      await this.ordersService.updateStatus(
+        order.id,
+        OrderStatus.PROCESSING,
+        user,
+      );
     }
 
     return savedPayment;
@@ -84,19 +97,25 @@ export class PaymentsService {
     return payment;
   }
 
-  private async mockPaymentProcess(paymentDto: ProcessPaymentDto): Promise<{ success: boolean; reference: string }> {
+  private async mockPaymentProcess(
+    paymentDto: ProcessPaymentDto,
+  ): Promise<{ success: boolean; reference: string }> {
     // Mock payment processing logic
     const reference = `PAY_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Simulate payment processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Mock success rate (90% success for demo)
     const success = Math.random() > 0.1;
 
     if (paymentDto.paymentMethod === PaymentMethod.CARD) {
       // Mock card validation
-      if (!paymentDto.cardNumber || !paymentDto.cardExpiry || !paymentDto.cardCvv) {
+      if (
+        !paymentDto.cardNumber ||
+        !paymentDto.cardExpiry ||
+        !paymentDto.cardCvv
+      ) {
         return { success: false, reference };
       }
     } else if (paymentDto.paymentMethod === PaymentMethod.MOBILE_MONEY) {

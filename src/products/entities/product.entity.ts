@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Store } from '../../stores/entities/store.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { OrderItem } from '../../orders/entities/order-item.entity';
@@ -31,23 +40,23 @@ export class Product {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => Store, store => store.products)
+  @ManyToOne(() => Store, (store) => store.products)
   @JoinColumn({ name: 'store_id' })
   store: Store;
 
   @Column()
   storeId: string;
 
-  @ManyToOne(() => Category, category => category.products)
+  @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @Column()
   categoryId: string;
 
-  @OneToMany(() => OrderItem, orderItem => orderItem.product)
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
   orderItems: OrderItem[];
 
-  @OneToMany(() => Review, review => review.product)
+  @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];
 }

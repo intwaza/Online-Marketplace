@@ -6,7 +6,10 @@ export class CreateProductDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'Latest iPhone with amazing camera', required: false })
+  @ApiProperty({
+    example: 'Latest iPhone with amazing camera',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;

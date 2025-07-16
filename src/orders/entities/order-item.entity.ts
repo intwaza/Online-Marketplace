@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Order } from './order.entity';
 import { Product } from '../../products/entities/product.entity';
 
@@ -17,14 +24,14 @@ export class OrderItem {
   createdAt: Date;
 
   // Relations
-  @ManyToOne(() => Order, order => order.items)
+  @ManyToOne(() => Order, (order) => order.items)
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
   @Column()
   orderId: string;
 
-  @ManyToOne(() => Product, product => product.orderItems)
+  @ManyToOne(() => Product, (product) => product.orderItems)
   @JoinColumn({ name: 'product_id' })
   product: Product;
 

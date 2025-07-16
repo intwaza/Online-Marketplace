@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Store } from './entities/store.entity';
@@ -73,9 +78,13 @@ export class StoresService {
     });
   }
 
-  async update(id: string, updateStoreDto: CreateStoreDto, user: User): Promise<Store> {
+  async update(
+    id: string,
+    updateStoreDto: CreateStoreDto,
+    user: User,
+  ): Promise<Store> {
     const store = await this.findById(id);
-    
+
     // Check if user owns the store or is admin
     if (user.role !== UserRole.ADMIN && store.ownerId !== user.id) {
       throw new ForbiddenException('You can only update your own store');
@@ -93,7 +102,7 @@ export class StoresService {
 
   async remove(id: string, user: User): Promise<void> {
     const store = await this.findById(id);
-    
+
     // Check if user owns the store or is admin
     if (user.role !== UserRole.ADMIN && store.ownerId !== user.id) {
       throw new ForbiddenException('You can only delete your own store');

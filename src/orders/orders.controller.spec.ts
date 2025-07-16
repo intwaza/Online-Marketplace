@@ -94,7 +94,11 @@ describe('OrdersController', () => {
 
   describe('findStoreOrders', () => {
     it('should return store orders for seller', async () => {
-      const seller = { ...mockUser, role: UserRole.SELLER, store: { id: 'store-1' } };
+      const seller = {
+        ...mockUser,
+        role: UserRole.SELLER,
+        store: { id: 'store-1' },
+      };
       const orders = [mockOrder];
       mockOrdersService.findByStore.mockResolvedValue(orders);
 
@@ -129,9 +133,17 @@ describe('OrdersController', () => {
       const updatedOrder = { ...mockOrder, status: OrderStatus.PROCESSING };
       mockOrdersService.updateStatus.mockResolvedValue(updatedOrder);
 
-      const result = await controller.updateStatus('order-1', OrderStatus.PROCESSING, mockUser as any);
+      const result = await controller.updateStatus(
+        'order-1',
+        OrderStatus.PROCESSING,
+        mockUser as any,
+      );
 
-      expect(service.updateStatus).toHaveBeenCalledWith('order-1', OrderStatus.PROCESSING, mockUser);
+      expect(service.updateStatus).toHaveBeenCalledWith(
+        'order-1',
+        OrderStatus.PROCESSING,
+        mockUser,
+      );
       expect(result).toEqual(updatedOrder);
     });
   });

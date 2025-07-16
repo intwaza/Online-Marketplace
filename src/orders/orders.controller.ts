@@ -1,5 +1,20 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -35,14 +50,20 @@ export class OrdersController {
   }
 
   @ApiOperation({ summary: 'Get user orders' })
-  @ApiResponse({ status: 200, description: 'User orders retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'User orders retrieved successfully',
+  })
   @Get()
   async findUserOrders(@GetUser() user: User) {
     return this.ordersService.findByUser(user.id);
   }
 
   @ApiOperation({ summary: 'Get store orders (Seller only)' })
-  @ApiResponse({ status: 200, description: 'Store orders retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Store orders retrieved successfully',
+  })
   @Get('store')
   @Roles(UserRole.SELLER)
   async findStoreOrders(@GetUser() user: User) {
@@ -61,7 +82,10 @@ export class OrdersController {
   }
 
   @ApiOperation({ summary: 'Update order status' })
-  @ApiResponse({ status: 200, description: 'Order status updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Order status updated successfully',
+  })
   @Put(':id/status')
   async updateStatus(
     @Param('id') id: string,
@@ -73,7 +97,10 @@ export class OrdersController {
 
   @ApiOperation({ summary: 'Delete order' })
   @ApiResponse({ status: 200, description: 'Order deleted successfully' })
-  @ApiResponse({ status: 403, description: 'You can only delete your own orders' })
+  @ApiResponse({
+    status: 403,
+    description: 'You can only delete your own orders',
+  })
   @Delete(':id')
   async remove(@Param('id') id: string, @GetUser() user: User) {
     await this.ordersService.remove(id, user);

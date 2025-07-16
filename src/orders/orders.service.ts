@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InjectQueue } from '@nestjs/bull';
@@ -38,9 +45,11 @@ export class OrdersService {
 
     for (const item of createOrderDto.items) {
       const product = await this.productsService.findById(item.productId);
-      
+
       if (product.stockQuantity < item.quantity) {
-        throw new BadRequestException(`Insufficient stock for product ${product.name}`);
+        throw new BadRequestException(
+          `Insufficient stock for product ${product.name}`,
+        );
       }
 
       const itemTotal = product.price * item.quantity;
@@ -135,7 +144,11 @@ export class OrdersService {
       .getMany();
   }
 
-  async updateStatus(id: string, status: OrderStatus, user: User): Promise<Order> {
+  async updateStatus(
+    id: string,
+    status: OrderStatus,
+    user: User,
+  ): Promise<Order> {
     const order = await this.findById(id);
 
     // Check permissions
@@ -145,11 +158,13 @@ export class OrdersService {
 
     if (user.role === UserRole.SELLER) {
       // Check if seller owns any product in the order
-      const hasSellerProduct = order.items.some(item => 
-        item.product.store.id === user.store?.id
+      const hasSellerProduct = order.items.some(
+        (item) => item.product.store.id === user.store?.id,
       );
       if (!hasSellerProduct) {
-        throw new ForbiddenException('You can only update orders containing your products');
+        throw new ForbiddenException(
+          'You can only update orders containing your products',
+        );
       }
     }
 

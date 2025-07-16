@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
@@ -23,16 +28,20 @@ export class ReviewsService {
     }
 
     // Verify product exists
-    const product = await this.productsService.findById(createReviewDto.productId);
+    const product = await this.productsService.findById(
+      createReviewDto.productId,
+    );
 
     // Check if user has purchased this product
     const userOrders = await this.ordersService.findByUser(user.id);
-    const hasPurchased = userOrders.some(order =>
-      order.items.some(item => item.productId === createReviewDto.productId)
+    const hasPurchased = userOrders.some((order) =>
+      order.items.some((item) => item.productId === createReviewDto.productId),
     );
 
     if (!hasPurchased) {
-      throw new BadRequestException('You can only review products you have purchased');
+      throw new BadRequestException(
+        'You can only review products you have purchased',
+      );
     }
 
     // Check if user has already reviewed this product
@@ -89,7 +98,11 @@ export class ReviewsService {
     return review;
   }
 
-  async update(id: string, updateReviewDto: CreateReviewDto, user: User): Promise<Review> {
+  async update(
+    id: string,
+    updateReviewDto: CreateReviewDto,
+    user: User,
+  ): Promise<Review> {
     const review = await this.findById(id);
 
     // Check if user owns the review
@@ -112,16 +125,19 @@ export class ReviewsService {
     await this.reviewRepository.remove(review);
   }
 
-  async getProductRatingStats(productId: string): Promise<{ averageRating: number; totalReviews: number }> {
+  async getProductRatingStats(
+    productId: string,
+  ): Promise<{ averageRating: number; totalReviews: number }> {
     const reviews = await this.reviewRepository.find({
       where: { productId },
       select: ['rating'],
     });
 
     const totalReviews = reviews.length;
-    const averageRating = totalReviews > 0 
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
-      : 0;
+    const averageRating =
+      totalReviews > 0
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews
+        : 0;
 
     return { averageRating: Math.round(averageRating * 10) / 10, totalReviews };
   }
