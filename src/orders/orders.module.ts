@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
 import { OrdersService } from './orders.service';
@@ -10,7 +10,7 @@ import { ProductsModule } from '../products/products.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem]),
-    ProductsModule,
+    forwardRef(() => ProductsModule), // Handle circular dependency
     BullModule.registerQueue({
       name: 'order-processing',
     }),

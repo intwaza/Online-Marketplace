@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query } fro
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { ReviewsService } from '../reviews/reviews.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { UserRole } from '../common/enums/user-role.enum';
 import { User } from '../users/entities/user.entity';
@@ -12,7 +13,10 @@ import { User } from '../users/entities/user.entity';
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    private reviewsService: ReviewsService,
+  ) {}
 
   @ApiOperation({ summary: 'Create product (Seller only)' })
   @ApiResponse({ status: 201, description: 'Product created successfully' })
@@ -54,6 +58,20 @@ export class ProductsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.productsService.findById(id);
+  }
+
+  @ApiOperation({ summary: 'Get product reviews' })
+  @ApiResponse({ status: 200, description: 'Product reviews retrieved successfully' })
+  @Get(':id/reviews')
+  async getProductReviews(@Param('id') productId: string) {
+    return this.reviewsService.findByProduct(productId);
+  }
+
+  @ApiOperation({ summary: 'Get product rating stats' })
+  @ApiResponse({ status: 200, description: 'Product rating stats retrieved successfully' })
+  @Get(':id/rating-stats')
+  async getProductRatingStats(@Param('id') productId: string) {
+    return this.reviewsService.getProductRatingStats(productId);
   }
 
   @ApiOperation({ summary: 'Update product' })

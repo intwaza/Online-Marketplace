@@ -52,7 +52,6 @@ services:
     networks:
       - marketplace-network
 
-  # Optional: Redis Commander for Redis management
   redis-commander:
     image: rediscommander/redis-commander:latest
     hostname: redis-commander
