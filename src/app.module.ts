@@ -11,6 +11,7 @@ import { OrdersModule } from 'src/orders/orders.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
 import { PaymentsModule } from 'src/payments/payments.module';
 import { QueueModule } from 'src/queue/queue.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -44,5 +45,6 @@ import { QueueModule } from 'src/queue/queue.module';
     PaymentsModule,
     QueueModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

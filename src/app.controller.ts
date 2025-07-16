@@ -1,12 +1,28 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
-
+@ApiTags('Root')
+@Controller() // No prefix, handles root path
+export class AppController { // Keep the class name as AppController
+  @ApiOperation({ summary: 'API welcome message' })
+  @ApiResponse({ status: 200, description: 'Welcome message with API information' })
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getWelcome() {
+    return {
+      message: 'Welcome to Marketplace API',
+      documentation: '/api/docs',
+      health: '/api/health',
+      version: '1.0.0',
+      endpoints: {
+        auth: '/api/auth',
+        users: '/api/users',
+        stores: '/api/stores',
+        products: '/api/products',
+        categories: '/api/categories',
+        orders: '/api/orders',
+        reviews: '/api/reviews',
+        payments: '/api/payments',
+      }
+    };
   }
 }

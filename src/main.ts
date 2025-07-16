@@ -13,6 +13,7 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }));
 
+
   // CORS configuration
   app.enableCors({
     origin: process.env.FRONTEND_URL || '*',
@@ -33,10 +34,35 @@ async function bootstrap() {
     .addTag('Orders')
     .addTag('Reviews')
     .addTag('Payments')
+    .addTag('Health')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+
+  // Add a simple root route handler
+  app.use('/', (req, res, next) => {
+    if (req.method === 'GET' && req.url === '/') {
+      res.json({
+        message: 'Welcome to Marketplace API',
+        documentation: '/api/docs',
+        health: '/api/health',
+        version: '1.0.0',
+        endpoints: {
+          auth: '/api/auth',
+          users: '/api/users',
+          stores: '/api/stores',
+          products: '/api/products',
+          categories: '/api/categories',
+          orders: '/api/orders',
+          reviews: '/api/reviews',
+          payments: '/api/payments',
+        }
+      });
+    } else {
+      next();
+    }
+  });
 
   // Global prefix
   app.setGlobalPrefix('api');
@@ -45,6 +71,7 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
   console.log(`Swagger docs available at: http://localhost:${port}/api/docs`);
+  console.log(`Health check available at: http://localhost:${port}/api/health`);
 }
 
 bootstrap();
