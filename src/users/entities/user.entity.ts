@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
-import { UserRole } from 'src/common/enums/user-role.enum';
-import { Store } from 'src/stores/entities/store.entity';
-import { Order } from 'src/orders/entities/order.entity';
-import { Review } from 'src/reviews/entities/review.entity';
+import { UserRole } from '../../common/enums/user-role.enum';
+import { Store } from '../../stores/entities/store.entity';
+import { Order } from '../../orders/entities/order.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('users')
 export class User {

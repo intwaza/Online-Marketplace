@@ -5,12 +5,13 @@ import { SellerApplicationDto } from '../auth/dto/seller-application.dto';
 @Injectable()
 export class EmailService {
   private transporter: nodemailer.Transporter;
+  private isConfigured: boolean = false;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST ?? 'smtp.gmail.com',
-      port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
-      secure: false,
+      port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 465,
+      secure: true,
       auth: {
         user: process.env.SMTP_USER ?? '',
         pass: process.env.SMTP_PASS ?? '',
@@ -19,7 +20,7 @@ export class EmailService {
   }
 
   async sendVerificationEmail(email: string, token: string): Promise<void> {
-    const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email/${token}`;
+    const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/auth/verify-email/${token}`;
     
     const mailOptions = {
       from: process.env.SMTP_USER,
@@ -43,33 +44,78 @@ export class EmailService {
     }
   }
 
-  async sendSellerApplicationEmail(application: SellerApplicationDto): Promise<void> {
+  async sendSellerUpgradeEmail(email: string): Promise<void> {
+    if (!this.isConfigured) {
+      console.log(`Email not configured. Would send seller upgrade email to: ${email}`);
+      return;
+    }
+  
+    const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/auth/login`;
+    
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: 'Account Upgraded to Seller - Marketplace',
+      html: `
+        <h2>🎉 Congratulations! Your Account Has Been Upgraded</h2>
+        <p>Your request to become a seller has been approved!</p>
+        <p>Your shopper account has been upgraded to a seller account.</p>
+        <p>You can now:</p>
+        <ul>
+          <li>✅ Create your store</li>
+          <li>✅ Add products</li>
+          <li>✅ Manage orders</li>
+          <li>✅ Continue shopping as before</li>
+        </ul>
+        <a href="${loginUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login to Your Account</a>
+        <p>Welcome to our seller community!</p>
+        <p>Best regards,<br>Marketplace Team</p>
+      `,
+    };
+  
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Seller upgrade email sent to ${email}`);
+    } catch (error) {
+      console.error('Error sending seller upgrade email:', error);
+    }
+  }
+  
+  // Update the existing sendSellerApplicationEmail to handle upgrades
+  async sendSellerApplicationEmail(application: SellerApplicationDto & { upgradeRequest?: boolean }): Promise<void> {
+    if (!this.isConfigured) {
+      console.log(`Email not configured. Would send seller application for: ${application.email}`);
+      return;
+    }
+  
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@marketplace.com';
+    const isUpgrade = application.upgradeRequest || false;
     
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: adminEmail,
-      subject: 'New Seller Application - Marketplace',
+      subject: `${isUpgrade ? 'Seller Upgrade Request' : 'New Seller Application'} - Marketplace`,
       html: `
-        <h2>New Seller Application</h2>
+        <h2>${isUpgrade ? '🔄 Seller Upgrade Request' : '🆕 New Seller Application'}</h2>
         <p><strong>Email:</strong> ${application.email}</p>
         <p><strong>Store Name:</strong> ${application.storeName}</p>
         <p><strong>Store Description:</strong> ${application.storeDescription || 'Not provided'}</p>
-        <p>Please review and approve this seller application in the admin panel.</p>
+        <p><strong>Request Type:</strong> ${isUpgrade ? 'Account Upgrade (Existing Shopper)' : 'New Account'}</p>
+        <p>Please review and approve this ${isUpgrade ? 'upgrade request' : 'seller application'} in the admin panel.</p>
         <p>Best regards,<br>Marketplace System</p>
       `,
     };
-
+  
     try {
       await this.transporter.sendMail(mailOptions);
-      console.log(`Seller application email sent for ${application.email}`);
+      console.log(`Seller ${isUpgrade ? 'upgrade' : 'application'} email sent for ${application.email}`);
     } catch (error) {
       console.error('Error sending seller application email:', error);
     }
   }
 
   async sendSellerApprovalEmail(email: string, tempPassword: string): Promise<void> {
-    const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login`;
+    const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/auth/login`;
     
     const mailOptions = {
       from: process.env.SMTP_USER,

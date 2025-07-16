@@ -2,21 +2,22 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
-import { AuthModule } from 'src/auth/auth.module';
-import { UsersModule } from 'src/users/users.module';
-import { StoresModule } from 'src/stores/stores.module';
-import { ProductsModule } from 'src/products/products.module';
-import { CategoriesModule } from 'src/categories/categories.module';
-import { OrdersModule } from 'src/orders/orders.module';
-import { ReviewsModule } from 'src/reviews/reviews.module';
-import { PaymentsModule } from 'src/payments/payments.module';
-import { QueueModule } from 'src/queue/queue.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { StoresModule } from './stores/stores.module';
+import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
+import { OrdersModule } from './orders/orders.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { PaymentsModule } from './payments/payments.module';
+import { QueueModule } from './queue/queue.module';
 import { AppController } from './app.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',

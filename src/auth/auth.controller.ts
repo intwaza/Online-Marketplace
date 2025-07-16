@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { SellerApplicationDto } from './dto/seller-application.dto';
+import { Roles } from './decorators/roles.decorator';
+import { UserRole } from '../common/enums/user-role.enum';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -34,18 +36,32 @@ export class AuthController {
     return this.authService.verifyEmail(token);
   }
 
-  @ApiOperation({ summary: 'Apply as seller' })
-  @ApiResponse({ status: 201, description: 'Seller application submitted' })
-  @ApiResponse({ status: 409, description: 'User already exists' })
-  @Post('apply-seller')
-  async applyAsSeller(@Body() sellerApplicationDto: SellerApplicationDto) {
-    return this.authService.applyAsSeller(sellerApplicationDto);
-  }
+    @ApiOperation({ summary: 'Approve seller (Admin only)' })
+    @ApiResponse({ status: 200, description: 'Seller approved successfully' })
+    @Post('approve-seller/:email')
+    @Roles(UserRole.ADMIN)
+    async approveSeller(
+    @Param('email') email: string,
+    @Body() body?: { isUpgrade?: boolean }
+    ) {
+    const isUpgrade = body?.isUpgrade || false;
+    return this.authService.approveSeller(email, isUpgrade);
+    }
 
-  @ApiOperation({ summary: 'Approve seller (Admin only)' })
-  @ApiResponse({ status: 200, description: 'Seller approved successfully' })
-  @Post('approve-seller/:email')
-  async approveSeller(@Param('email') email: string) {
-    return this.authService.approveSeller(email);
-  }
+    // Alternative: Create separate endpoints for clarity
+    @ApiOperation({ summary: 'Approve new seller (Admin only)' })
+    @ApiResponse({ status: 200, description: 'New seller approved successfully' })
+    @Post('approve-seller/:email')
+    @Roles(UserRole.ADMIN)
+    async approveNewSeller(@Param('email') email: string) {
+    return this.authService.approveSeller(email, false);
+    }
+
+    @ApiOperation({ summary: 'Upgrade shopper to seller (Admin only)' })
+    @ApiResponse({ status: 200, description: 'Shopper upgraded to seller successfully' })
+    @Post('upgrade-to-seller/:email')
+    @Roles(UserRole.ADMIN)
+    async upgradeToSeller(@Param('email') email: string) {
+    return this.authService.approveSeller(email, true);
+    }
 }

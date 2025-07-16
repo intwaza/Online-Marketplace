@@ -20,6 +20,9 @@ async function bootstrap() {
     credentials: true,
   });
 
+  // Global prefix
+  app.setGlobalPrefix('api');
+
   // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Marketplace API')
@@ -64,8 +67,6 @@ async function bootstrap() {
     }
   });
 
-  // Global prefix
-  app.setGlobalPrefix('api');
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

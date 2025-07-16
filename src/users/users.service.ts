@@ -43,7 +43,7 @@ export class UsersService {
     return this.userRepository.findOne({ where: { verificationToken: token } });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto & { verificationToken?: string; isVerified?: boolean }): Promise<User> {
+  async update(id: string, updateUserDto: UpdateUserDto & { verificationToken?: string; isVerified?: boolean; role?: UserRole }): Promise<User> {
     const user = await this.findById(id);
     Object.assign(user, updateUserDto);
     return this.userRepository.save(user);

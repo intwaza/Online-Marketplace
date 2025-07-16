@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
-import { Store } from 'src/stores/entities/store.entity';
-import { Category } from 'src/categories/entities/category.entity';
-import { OrderItem } from 'src/orders/entities/order-item.entity';
-import { Review } from 'src/reviews/entities/review.entity';
+import { Store } from '../../stores/entities/store.entity';
+import { Category } from '../../categories/entities/category.entity';
+import { OrderItem } from '../../orders/entities/order-item.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('products')
 export class Product {
