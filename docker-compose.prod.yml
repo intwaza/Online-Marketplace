@@ -11,16 +11,15 @@ services:
       - NODE_ENV=production
       - DATABASE_HOST=postgres
       - DATABASE_PORT=5432
-      - DATABASE_USERNAME=marketplace_user
-      - DATABASE_PASSWORD=password
+      - DATABASE_USERNAME=${DB_USERNAME}
+      - DATABASE_PASSWORD=${DB_PASSWORD}
       - DATABASE_NAME=marketplace_db
-      - JWT_SECRET=24947ec697b63d5b9e0266a23b81c02885c1d3574ed17b16afc8f602fce77e671cffb8215dbd75a06f25c8e55ae594f84535d4825102ce7bd9ef083584105f8b
-      - REDIS_HOST=redis
+      - JWT_SECRET=${JWT_SECRET}
       - REDIS_PORT=6379
       - SMTP_HOST=smtp.gmail.com
       - SMTP_PORT=587
-      - SMTP_USER=iintwazabelyse@gmail.com
-      - SMTP_PASS=dynm acsh wfin iqxe
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
     depends_on:
       - postgres
       - redis
@@ -42,17 +41,6 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/ssl/certs
-    depends_on:
-      - app
-    restart: unless-stopped
 
 volumes:
   postgres_data:
