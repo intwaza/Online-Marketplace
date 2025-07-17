@@ -25,7 +25,6 @@ export class Category {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relations
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 }

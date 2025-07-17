@@ -23,7 +23,6 @@ export class OrderItem {
   @CreateDateColumn()
   createdAt: Date;
 
-  // Relations
   @ManyToOne(() => Order, (order) => order.items)
   @JoinColumn({ name: 'order_id' })
   order: Order;

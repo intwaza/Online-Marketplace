@@ -7,7 +7,6 @@ describe('AppController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      // Remove EmailService since your AppController might not use it
     }).compile();
 
     controller = module.get<AppController>(AppController);
@@ -24,7 +23,6 @@ describe('AppController', () => {
       expect(result).toEqual({
         message: 'Welcome to Marketplace API',
         documentation: '/api/docs',
-        health: '/api/health',
         version: '1.0.0',
         endpoints: {
           auth: '/api/auth',
@@ -49,10 +47,6 @@ describe('AppController', () => {
       expect(result.documentation).toBe('/api/docs');
     });
 
-    it('should have health endpoint', () => {
-      const result = controller.getWelcome();
-      expect(result.health).toBe('/api/health');
-    });
 
     it('should have version information', () => {
       const result = controller.getWelcome();
@@ -84,7 +78,6 @@ describe('AppController', () => {
       expect(typeof result).toBe('object');
       expect(typeof result.message).toBe('string');
       expect(typeof result.documentation).toBe('string');
-      expect(typeof result.health).toBe('string');
       expect(typeof result.version).toBe('string');
       expect(typeof result.endpoints).toBe('object');
     });

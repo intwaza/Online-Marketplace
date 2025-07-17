@@ -23,26 +23,21 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    // Check if user already exists
     const existingUser = await this.usersService.findByEmail(registerDto.email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    // Generate verification token
     const verificationToken = uuidv4();
 
-    // Create user
     const user = await this.usersService.create({
       ...registerDto,
       password: hashedPassword,
       verificationToken,
     });
 
-    // Send verification email
     await this.emailService.sendVerificationEmail(
       user.email,
       verificationToken,
@@ -71,20 +66,20 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    // Find user by email
+
     const user = await this.usersService.findByEmail(loginDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Check if user is verified
+
     if (!user.isVerified) {
       throw new UnauthorizedException(
         'Please verify your email before logging in',
       );
     }
 
-    // Validate password
+
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
       user.password,
@@ -93,7 +88,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Generate JWT token
+
     const payload = { email: user.email, sub: user.id, role: user.role };
     const token = this.jwtService.sign(payload);
 
@@ -108,7 +103,7 @@ export class AuthService {
     };
   }
 
-  // Enhanced auth.service.ts with role upgrade capability
+
 
   async applyAsSeller(sellerApplicationDto: SellerApplicationDto) {
     const existingUser = await this.usersService.findByEmail(
@@ -116,7 +111,7 @@ export class AuthService {
     );
 
     if (existingUser) {
-      // Handle different existing user scenarios
+
       switch (existingUser.role) {
         case UserRole.SELLER:
           throw new ConflictException('User is already a seller');
@@ -125,10 +120,9 @@ export class AuthService {
           throw new ConflictException('Admin users cannot apply as sellers');
 
         case UserRole.SHOPPER:
-          // Allow shoppers to upgrade to sellers
           await this.emailService.sendSellerApplicationEmail({
             ...sellerApplicationDto,
-            upgradeRequest: true, // Flag to indicate this is an upgrade
+            upgradeRequest: true, 
           });
 
           return {
@@ -144,7 +138,7 @@ export class AuthService {
       }
     }
 
-    // New user application
+
     await this.emailService.sendSellerApplicationEmail(sellerApplicationDto);
 
     return {
@@ -154,17 +148,16 @@ export class AuthService {
     };
   }
 
-  // Enhanced approveSeller method to handle upgrades
+
   async approveSeller(email: string, isUpgrade: boolean = false) {
     const existingUser = await this.usersService.findByEmail(email);
 
     if (isUpgrade && existingUser && existingUser.role === UserRole.SHOPPER) {
-      // Upgrade existing shopper to seller
       await this.usersService.update(existingUser.id, {
         role: UserRole.SELLER,
       });
 
-      // Send upgrade confirmation email
+
       await this.emailService.sendSellerUpgradeEmail(email);
 
       return {
@@ -180,19 +173,18 @@ export class AuthService {
       );
     }
 
-    // Create new seller account (original logic)
+
     const tempPassword = Math.random().toString(36).slice(-8);
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
     const user = await this.usersService.create({
       email,
-      name: 'Seller', // Will be updated by user
+      name: 'Seller',
       password: hashedPassword,
       role: UserRole.SELLER,
       isVerified: true,
     });
 
-    // Send account creation email
     await this.emailService.sendSellerApprovalEmail(email, tempPassword);
 
     return {

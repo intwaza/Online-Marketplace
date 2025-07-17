@@ -12,10 +12,10 @@ import { ReviewsModule } from '../reviews/reviews.module';
     TypeOrmModule.forFeature([Product]),
     StoresModule,
     CategoriesModule,
-    forwardRef(() => ReviewsModule), // Handle potential circular dependency
+    forwardRef(() => ReviewsModule),
   ],
   controllers: [ProductsController],
   providers: [ProductsService],
-  exports: [ProductsService], // Make sure ProductsService is exported
+  exports: [ProductsService],
 })
 export class ProductsModule {}

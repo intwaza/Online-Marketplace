@@ -41,7 +41,6 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relations
   @OneToOne(() => Store, (store) => store.owner)
   store: Store;
 

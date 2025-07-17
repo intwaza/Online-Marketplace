@@ -40,7 +40,7 @@ export class Payment {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relations
+
   @ManyToOne(() => Order, (order) => order.payments)
   @JoinColumn({ name: 'order_id' })
   order: Order;

@@ -83,7 +83,6 @@ export class EmailService {
     }
   }
 
-  // Update the existing sendSellerApplicationEmail to handle upgrades
   async sendSellerApplicationEmail(
     application: SellerApplicationDto & { upgradeRequest?: boolean },
   ): Promise<void> {

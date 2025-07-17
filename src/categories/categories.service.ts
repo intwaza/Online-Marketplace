@@ -16,7 +16,6 @@ export class CategoriesService {
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    // Check if category already exists
     const existingCategory = await this.categoryRepository.findOne({
       where: { name: createCategoryDto.name },
     });
@@ -51,7 +50,6 @@ export class CategoriesService {
   ): Promise<Category> {
     const category = await this.findById(id);
 
-    // Check if name is already taken by another category
     if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
       const existingCategory = await this.categoryRepository.findOne({
         where: { name: updateCategoryDto.name },

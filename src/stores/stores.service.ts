@@ -19,12 +19,10 @@ export class StoresService {
   ) {}
 
   async create(createStoreDto: CreateStoreDto, user: User): Promise<Store> {
-    // Check if user is seller
     if (user.role !== UserRole.SELLER) {
       throw new ForbiddenException('Only sellers can create stores');
     }
 
-    // Check if seller already has a store
     const existingStore = await this.storeRepository.findOne({
       where: { ownerId: user.id },
     });
@@ -85,7 +83,6 @@ export class StoresService {
   ): Promise<Store> {
     const store = await this.findById(id);
 
-    // Check if user owns the store or is admin
     if (user.role !== UserRole.ADMIN && store.ownerId !== user.id) {
       throw new ForbiddenException('You can only update your own store');
     }
@@ -103,7 +100,6 @@ export class StoresService {
   async remove(id: string, user: User): Promise<void> {
     const store = await this.findById(id);
 
-    // Check if user owns the store or is admin
     if (user.role !== UserRole.ADMIN && store.ownerId !== user.id) {
       throw new ForbiddenException('You can only delete your own store');
     }

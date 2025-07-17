@@ -6,7 +6,6 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -15,16 +14,13 @@ async function bootstrap() {
     }),
   );
 
-  // CORS configuration
   app.enableCors({
     origin: process.env.FRONTEND_URL || '*',
     credentials: true,
   });
 
-  // Global prefix
   app.setGlobalPrefix('api');
 
-  // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Marketplace API')
     .setDescription('A comprehensive online marketplace API')
@@ -38,19 +34,16 @@ async function bootstrap() {
     .addTag('Orders')
     .addTag('Reviews')
     .addTag('Payments')
-    .addTag('Health')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  // Add a simple root route handler
   app.use('/', (req, res, next) => {
     if (req.method === 'GET' && req.url === '/') {
       res.json({
         message: 'Welcome to Marketplace API',
         documentation: '/api/docs',
-        health: '/api/health',
         version: '1.0.0',
         endpoints: {
           auth: '/api/auth',
@@ -72,7 +65,6 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
   console.log(`Swagger docs available at: http://localhost:${port}/api/docs`);
-  console.log(`Health check available at: http://localhost:${port}/api/health`);
 }
 
 bootstrap();

@@ -47,7 +47,6 @@ export class AuthController {
     return this.authService.approveSeller(email, isUpgrade);
   }
 
-  // Alternative: Create separate endpoints for clarity
   @ApiOperation({ summary: 'Approve new seller (Admin only)' })
   @ApiResponse({ status: 200, description: 'New seller approved successfully' })
   @Post('approve-seller/:email')

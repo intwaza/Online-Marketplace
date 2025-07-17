@@ -26,17 +26,14 @@ export class PaymentsService {
   ): Promise<Payment> {
     const order = await this.ordersService.findById(processPaymentDto.orderId);
 
-    // Check if user owns the order
     if (order.userId !== user.id) {
       throw new BadRequestException('You can only pay for your own orders');
     }
 
-    // Check if order is still pending
     if (order.status !== OrderStatus.PENDING) {
       throw new BadRequestException('Order is no longer pending');
     }
 
-    // Check if payment already exists
     const existingPayment = await this.paymentRepository.findOne({
       where: { orderId: order.id, status: PaymentStatus.COMPLETED },
     });
@@ -44,7 +41,6 @@ export class PaymentsService {
       throw new BadRequestException('Order has already been paid for');
     }
 
-    // Create payment record
     const payment = this.paymentRepository.create({
       orderId: order.id,
       amount: order.totalAmount,
@@ -54,10 +50,8 @@ export class PaymentsService {
 
     const savedPayment = await this.paymentRepository.save(payment);
 
-    // Mock payment processing
     const paymentResult = await this.mockPaymentProcess(processPaymentDto);
 
-    // Update payment status
     savedPayment.status = paymentResult.success
       ? PaymentStatus.COMPLETED
       : PaymentStatus.FAILED;
@@ -65,7 +59,6 @@ export class PaymentsService {
 
     await this.paymentRepository.save(savedPayment);
 
-    // Update order status if payment successful
     if (paymentResult.success) {
       await this.ordersService.updateStatus(
         order.id,
@@ -100,17 +93,13 @@ export class PaymentsService {
   private async mockPaymentProcess(
     paymentDto: ProcessPaymentDto,
   ): Promise<{ success: boolean; reference: string }> {
-    // Mock payment processing logic
     const reference = `PAY_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Simulate payment processing delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Mock success rate (90% success for demo)
     const success = Math.random() > 0.1;
 
     if (paymentDto.paymentMethod === PaymentMethod.CARD) {
-      // Mock card validation
       if (
         !paymentDto.cardNumber ||
         !paymentDto.cardExpiry ||
@@ -119,7 +108,6 @@ export class PaymentsService {
         return { success: false, reference };
       }
     } else if (paymentDto.paymentMethod === PaymentMethod.MOBILE_MONEY) {
-      // Mock mobile money validation
       if (!paymentDto.phoneNumber) {
         return { success: false, reference };
       }

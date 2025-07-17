@@ -24,7 +24,6 @@ export class OrderProcessorService {
     const { orderId, items } = job.data;
 
     try {
-      // Update stock quantities
       for (const item of items) {
         const product = await this.productRepository.findOne({
           where: { id: item.productId },
@@ -36,14 +35,12 @@ export class OrderProcessorService {
         }
       }
 
-      // Get order details for email
       const order = await this.orderRepository.findOne({
         where: { id: orderId },
         relations: ['user'],
       });
 
       if (order) {
-        // Send order confirmation email
         await this.emailService.sendOrderConfirmationEmail(
           order.user.email,
           orderId,

@@ -14,7 +14,6 @@ export class UsersModule implements OnModuleInit {
   constructor(private usersService: UsersService) {}
 
   async onModuleInit() {
-    // Create default admin user
     await this.usersService.createAdmin();
   }
 }

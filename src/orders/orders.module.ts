@@ -10,7 +10,7 @@ import { ProductsModule } from '../products/products.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem]),
-    forwardRef(() => ProductsModule), // Handle circular dependency
+    forwardRef(() => ProductsModule),
     BullModule.registerQueue({
       name: 'order-processing',
     }),

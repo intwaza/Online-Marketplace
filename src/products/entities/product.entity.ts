@@ -39,7 +39,6 @@ export class Product {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relations
   @ManyToOne(() => Store, (store) => store.products)
   @JoinColumn({ name: 'store_id' })
   store: Store;

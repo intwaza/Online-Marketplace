@@ -2,9 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('Root')
-@Controller() // No prefix, handles root path
+@Controller()
 export class AppController {
-  // Keep the class name as AppController
   @ApiOperation({ summary: 'API welcome message' })
   @ApiResponse({
     status: 200,
@@ -15,7 +14,6 @@ export class AppController {
     return {
       message: 'Welcome to Marketplace API',
       documentation: '/api/docs',
-      health: '/api/health',
       version: '1.0.0',
       endpoints: {
         auth: '/api/auth',

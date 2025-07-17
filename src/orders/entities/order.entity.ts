@@ -30,7 +30,7 @@ export class Order {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relations
+
   @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({ name: 'user_id' })
   user: User;

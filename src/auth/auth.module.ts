@@ -13,7 +13,6 @@ import { QueueModule } from '../queue/queue.module';
     UsersModule,
     QueueModule,
     PassportModule,
-    // Use JwtModule.registerAsync to inject ConfigService
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory:  (configService: ConfigService) => ({

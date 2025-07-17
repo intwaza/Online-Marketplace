@@ -26,12 +26,10 @@ export class ProductsService {
     createProductDto: CreateProductDto,
     user: User,
   ): Promise<Product> {
-    // Check if user is seller
     if (user.role !== UserRole.SELLER) {
       throw new ForbiddenException('Only sellers can create products');
     }
 
-    // Get seller's store
     const store = await this.storesService.findByOwner(user.id);
     if (!store) {
       throw new BadRequestException('You need to create a store first');
@@ -41,7 +39,6 @@ export class ProductsService {
       throw new BadRequestException('Your store needs to be approved first');
     }
 
-    // Verify category exists
     await this.categoriesService.findById(createProductDto.categoryId);
 
     const product = this.productRepository.create({
@@ -135,7 +132,6 @@ export class ProductsService {
   ): Promise<Product> {
     const product = await this.findById(id);
 
-    // Check if user owns the product or is admin
     if (
       user.role !== UserRole.ADMIN &&
       product.store.id !== (await this.storesService.findByOwner(user.id))?.id
@@ -143,7 +139,6 @@ export class ProductsService {
       throw new ForbiddenException('You can only update your own products');
     }
 
-    // Verify category exists if being updated
     if (updateProductDto.categoryId) {
       await this.categoriesService.findById(updateProductDto.categoryId);
     }
@@ -167,7 +162,6 @@ export class ProductsService {
   async remove(id: string, user: User): Promise<void> {
     const product = await this.findById(id);
 
-    // Check if user owns the product or is admin
     if (
       user.role !== UserRole.ADMIN &&
       product.store.id !== (await this.storesService.findByOwner(user.id))?.id

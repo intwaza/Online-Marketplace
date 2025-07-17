@@ -27,12 +27,10 @@ export class ReviewsService {
       throw new ForbiddenException('Only shoppers can leave reviews');
     }
 
-    // Verify product exists
     const product = await this.productsService.findById(
       createReviewDto.productId,
     );
 
-    // Check if user has purchased this product
     const userOrders = await this.ordersService.findByUser(user.id);
     const hasPurchased = userOrders.some((order) =>
       order.items.some((item) => item.productId === createReviewDto.productId),
@@ -44,7 +42,6 @@ export class ReviewsService {
       );
     }
 
-    // Check if user has already reviewed this product
     const existingReview = await this.reviewRepository.findOne({
       where: { userId: user.id, productId: createReviewDto.productId },
     });
@@ -105,7 +102,6 @@ export class ReviewsService {
   ): Promise<Review> {
     const review = await this.findById(id);
 
-    // Check if user owns the review
     if (review.userId !== user.id) {
       throw new ForbiddenException('You can only update your own reviews');
     }
@@ -117,7 +113,6 @@ export class ReviewsService {
   async remove(id: string, user: User): Promise<void> {
     const review = await this.findById(id);
 
-    // Check if user owns the review or is admin
     if (user.role !== UserRole.ADMIN && review.userId !== user.id) {
       throw new ForbiddenException('You can only delete your own reviews');
     }
