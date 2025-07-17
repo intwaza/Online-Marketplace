@@ -27,7 +27,7 @@ import { AppController } from './app.controller';
       password: process.env.DATABASE_PASSWORD || 'marketplace_pass',
       database: process.env.DATABASE_NAME || 'marketplace_db',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.NODE_ENV !== 'production',
+      synchronize: true,
       logging: process.env.NODE_ENV !== 'production',
     }),
     BullModule.forRoot({
