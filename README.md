@@ -1,160 +1,202 @@
 # Online Marketplace API
 
-A production-ready **NestJS-based RESTful API** for an online marketplace. Supports user authentication, store management, product listings, order processing, and mock payments — all built with **TypeScript**, **PostgreSQL**, **Redis**, and **Docker**.
+A full-featured marketplace backend built with NestJS. This started as a learning project to understand how real e-commerce systems work—authentication, role-based access, order processing, and all the moving parts that make online marketplaces tick.
 
-### Live Demo
+**Live Demo:** [online-marketplace-api](https://online-marketplace-production-91b8.up.railway.app)  
+**API Docs:** [Swagger UI](https://online-marketplace-production-91b8.up.railway.app/api/docs)
 
-* **API**: [online-marketplace](https://online-marketplace-production-91b8.up.railway.app)
-* **Swagger Docs**: [/api/docs](https://online-marketplace-production-91b8.up.railway.app/api/docs)
-* Use the Swagger UI to explore and test endpoints.
+## What it does
 
-
-## Authentication & Roles
-
-* **JWT-based** auth with email verification
-* **Role-based access control**: Admin, Seller, Shopper
-* Password hashing (`bcrypt`), secure tokens
-* Guard-protected routes per role
-
-
-## Core Features by Role
-
-### Admin (GOD MODE)
-
-* Approve sellers, manage users/stores/products/orders
-* Feature products and manage categories
-* Full system control
-
-### Seller
-
-* Apply via email
-* Manage a store and products
-* Handle incoming orders and view sales analytics
-
-### Shopper
-
-* Browse, order, track delivery, and review products
-* Get email notifications for updates
-
-
-## Payments
-
-* Simulated card and mobile money payments
-* Payment records linked to orders
-* Refund support for admins
-
-
-## Architecture Overview
-
-```
-Clients ↔ API Gateway (NestJS) ↔ Auth | Services | Queue
-                              ↘ PostgreSQL, Redis, Email
-```
-
-* **Redis + Bull** for background queues
-* **Nodemailer** for email events
-* **Swagger** for self-documented APIs
-* **Docker** for containerized deployment
-
+This API handles the complete lifecycle of an online marketplace:
+- Users can register as shoppers, apply to become sellers, or get admin privileges
+- Sellers manage their stores and products
+- Shoppers browse, order, and review products
+- Admins oversee the entire platform
+- Background jobs handle emails and notifications
+- Simulated payment processing (card and mobile money)
 
 ## Tech Stack
 
-| Tech                | Description                      |
-| ------------------- | -------------------------------- |
-| **NestJS**          | Backend framework (Node.js + TS) |
-| **PostgreSQL**      | Relational database with TypeORM |
-| **Redis + Bull**    | Queue processing system          |
-| **Nodemailer**      | Email sending service            |
-| **Swagger/OpenAPI** | API documentation                |
-| **Docker**          | Containerization                 |
-| **Jest**            | Testing framework                |
+**Backend:** NestJS (Node.js + TypeScript)  
+**Database:** PostgreSQL with TypeORM  
+**Cache & Queues:** Redis + Bull for background jobs  
+**Email:** Nodemailer for transactional emails  
+**Docs:** Swagger/OpenAPI  
+**Deployment:** Docker + Railway
 
-## Getting Started
+## Key Features
+
+### Role-Based System
+Built three distinct user experiences:
+
+**Admin (Full Control)**
+- Approve seller applications
+- Manage users, stores, products, and orders
+- Feature products and organize categories
+- Handle refunds and disputes
+
+**Seller (Store Management)**
+- Apply to sell via email verification
+- Create and manage one store
+- Add products with inventory tracking
+- Process incoming orders
+- View sales analytics
+
+**Shopper (Customer Experience)**
+- Browse products and stores
+- Place orders with delivery tracking
+- Leave reviews and ratings
+- Receive email notifications for order updates
+
+### Authentication & Security
+- JWT-based authentication
+- Email verification for new accounts
+- Role-based access control with guards
+- Password hashing with bcrypt
+- Protected routes based on user roles
+
+### Background Processing
+- Bull queues for async tasks
+- Email notifications (order confirmations, status updates, seller approvals)
+- Redis for caching and job management
+
+### Payment Simulation
+- Mock card and mobile money payments
+- Payment records linked to orders
+- Refund support for admins
+
+## Quick Start
 
 ### Prerequisites
+- Node.js 18+
+- PostgreSQL
+- Redis
+- Docker (optional)
 
-* Node.js 18+
-* PostgreSQL 13+
-* Redis (for queues)
-* Docker (optional but recommended)
-
-### Setup Instructions
+### Local Setup
 
 ```bash
-# 1. Clone the project
+# Clone the repository
 git clone https://github.com/intwaza/Online-Marketplace.git
 cd Online-Marketplace
 
-# 2. Install dependencies
+# Install dependencies
 npm install
 
-# 3. Configure environment
+# Set up environment variables
 cp .env.example .env
-# Fill out .env with database, JWT, email, and Redis config
+# Fill in your database, JWT secret, email config, and Redis URL
 
-# 4. Start app in development
+# Run migrations
+npm run migration:run
+
+# Start development server
 npm run start:dev
 ```
 
-Access API at: `http://localhost:3000`
-Swagger UI at: `http://localhost:3000/api/docs`
+Access the API at `http://localhost:3000`  
+Explore endpoints at `http://localhost:3000/api/docs`
 
----
-
-## Docker Quickstart
+### Docker Setup
 
 ```bash
-# Start containers
+# Start all services
 docker-compose up -d
 
-# Stop containers
+# Stop services
 docker-compose down
 ```
 
-
 ## API Overview
 
-Here’s a sample of available endpoints:
+All endpoints are documented in Swagger. Here are the main routes:
 
-* `/api/auth/register` – Register a user
-* `/api/auth/login` – Login and receive JWT
-* `/api/stores` – Create and manage stores
-* `/api/products` – List and manage products
-* `/api/orders` – Place, view, and manage orders
-* `/api/payments` – Process and track payments
+**Authentication**
+- `POST /api/auth/register` - Create account
+- `POST /api/auth/login` - Get JWT token
+- `POST /api/auth/verify-email` - Verify email address
 
-Explore them all via Swagger at `/api/docs`.
+**Stores**
+- `GET /api/stores` - List all stores
+- `POST /api/stores` - Create store (sellers only)
+- `PUT /api/stores/:id` - Update store
 
+**Products**
+- `GET /api/products` - Browse products
+- `POST /api/products` - Add product (sellers only)
+- `PUT /api/products/:id` - Update product
+
+**Orders**
+- `POST /api/orders` - Place order
+- `GET /api/orders` - View orders
+- `PATCH /api/orders/:id/status` - Update order status
+
+**Payments**
+- `POST /api/payments` - Process payment
+- `GET /api/payments/:id` - View payment details
+
+Visit `/api/docs` for complete endpoint documentation with request/response examples.
+
+## Project Structure
+
+```
+src/
+├── auth/           # Authentication & authorization
+├── users/          # User management
+├── stores/         # Store operations
+├── products/       # Product catalog
+├── orders/         # Order processing
+├── payments/       # Payment handling
+├── reviews/        # Product reviews
+├── email/          # Email service
+├── queues/         # Background jobs
+└── common/         # Shared utilities
+```
 
 ## Testing
 
 ```bash
-npm run test       
-npm run test:e2e   
-npm run test:cov   
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# Coverage report
+npm run test:cov
 ```
 
+## What I Learned
 
-## Roles Summary
+Building this taught me a lot about:
+- Structuring a real-world NestJS application
+- Implementing role-based access control properly
+- Managing async workflows with queues
+- Handling transactional emails
+- Designing a scalable API architecture
+- Writing maintainable TypeScript code
 
-| Role    | Permissions                                                                |
-| ------- | -------------------------------------------------------------------------- |
-| Admin   | System-wide control: users, stores, categories, featured products, refunds |
-| Seller  | One store, manage products/orders, see sales analytics                     |
-| Shopper | Browse, buy, review, view order history                                    |
-
+The modular structure makes it easy to add new features or modify existing ones without breaking things.
 
 ## Deployment
 
-Currently hosted on [Railway](https://railway.app).
-Includes SSL, PostgreSQL, Redis, and environment support.
+Currently deployed on Railway with:
+- PostgreSQL database
+- Redis for queues
+- SSL enabled
+- Environment-based configuration
 
+## Future Improvements
 
-## Highlights
+Some ideas I'm considering:
+- Add real payment gateway integration (Stripe/PayPal)
+- Implement product search with Elasticsearch
+- Add file upload for product images
+- Create admin dashboard
+- Implement inventory alerts
+- Add order analytics and reporting
 
-* Robust modular structure (follows NestJS best practices)
-* Realistic e-commerce flows
-* Scalable design with queues and email notifications
-* Easy to test, run, and deploy
+---
 
+**Note:** This is a portfolio project showcasing backend development skills. Payment processing is simulated for demonstration purposes.
 
